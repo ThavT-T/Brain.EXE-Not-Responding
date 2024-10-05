@@ -95,3 +95,9 @@ export const nearEarthObject = (async () => {
         return null; // Return null in case of an error
     }
 })();
+// // Parameters for each planets of the solar system, a: semiMajorAxis, e:eccentricity, i:inclinaison
+// import { nearEarthObject } from './readNasaValues.js';
+// import { planets } from './readNasaValues.js';
+// import { initSolarSystem } from './animate.js';
+
+// initSolarSystem(planets)
