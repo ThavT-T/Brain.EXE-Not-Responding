@@ -24,7 +24,7 @@ scene.add(sun);
 //     { name: 'Earth', a: 1.0, e: 0.01678, color: 'green' },
 //     { name: 'Mars', a: 1.523679, e: 0.0934, color: 'red' },
 //     { name: 'Jupiter', a: 5.2044, e: 0.0489, color: 'magenta' },
-//     { name: 'Saturn', a: 9.5826, e: 0.0565, color: 'cyan' },
+//     { name: 'Saturn', a: 9.5826, e: 0.0565, color: 'cyfan' },
 //     { name: 'Uranus', a: 19.2184, e: 0.046381, color: 'purple' },
 //     { name: 'Neptune', a: 30.110387, e: 0.009456, color: 'gold' }
 // ]
@@ -46,9 +46,9 @@ function getPlanetPosition(planet, t) {
     const a = planet.a; // semiMajorAxis
     const e = planet.e; // eccentricity
     const i = THREE.MathUtils.degToRad(planet.i); // inclinaison
-    // const longitudeAscendingNode = THREE.MathUtils.degToRad(planet.longitudeAscendingNode); 
+    const longitudeAscendingNode = THREE.MathUtils.degToRad(planet.longitudeAscendingNode); 
     const longitudePerihelion = THREE.MathUtils.degToRad(planet.longitudePerihelion); 
-
+    const argumentPerihapsis = longitudePerihelion - longitudeAscendingNode;
     // mean anomaly (M = n * t, avec n = √(GM/a³))
     const n = Math.sqrt(1 / Math.pow(a, 3)); // ici G et M sont normalisés pour un système solaire
     const meanAnomaly = n * t; // mean anomaly
@@ -64,9 +64,9 @@ function getPlanetPosition(planet, t) {
     const r = (a * (1 - e * e)) / (1 + e * Math.cos(trueAnomaly));
 
     // calculate coordinate x, y, z
-    const x = r * (Math.cos(longitudePerihelion) * Math.cos(trueAnomaly + longitudePerihelion) - Math.sin(longitudePerihelion) * Math.sin(trueAnomaly + longitudePerihelion) * Math.cos(i));
-    const y = r * (Math.sin(longitudePerihelion) * Math.cos(trueAnomaly + longitudePerihelion) + Math.cos(longitudePerihelion) * Math.sin(trueAnomaly + longitudePerihelion) * Math.cos(i));
-    const z = r * (Math.sin(trueAnomaly + longitudePerihelion) * Math.sin(i));
+    const x = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode) - Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode));
+    const y = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode) + Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode));
+    const z = r * (Math.sin(trueAnomaly + argumentPerihapsis) * Math.sin(i));
 
     return { x, y, z };
 }
@@ -74,13 +74,20 @@ function getPlanetPosition(planet, t) {
 function getPlanetOrbit(planet) {
     const a = planet.a
     const e = planet.e
-    const semiMinorAxis = a * Math.sqrt(1 - (e ** 2));
+    const i = planet.i
+    const semiMinorAxis = a * Math.sqrt(1 - (Math.pow(e, 2  )));
 
     const curve = new THREE.EllipseCurve(0, 0, a, semiMinorAxis, 0, 2 * Math.PI, false, 0);
     const points = curve.getPoints(50);
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = new THREE.LineBasicMaterial({color: 0xff0001f});
     const ellipse = new THREE.Line(geometry, material);
+
+    const offset = Math.sqrt((a ** 2) - (semiMinorAxis ** 2))
+    // ellipse.translateZ(-offset)
+    ellipse.rotateZ(THREE.MathUtils.degToRad(planet.longitudeAscendingNode));
+    ellipse.rotateX(THREE.MathUtils.degToRad(i));
+    ellipse.rotateZ(THREE.MathUtils.degToRad(planet.longitudePerihelion - planet.longitudeAscendingNode));
 
     return ellipse
 }
@@ -92,12 +99,13 @@ function animate(t) {
     // Adjust each planet at the scene
     planets.forEach(planet => {
         const position = getPlanetPosition(planet, t); // calculate actual position of the planet
-        const geometryPlanet = new THREE.SphereGeometry(0.05, 16, 16);
+        const geometryPlanet = new THREE.SphereGeometry(0.1, 16, 16);
         const materialPlanet = new THREE.MeshBasicMaterial({ color: planet.color });
         const planetMesh     = new THREE.Mesh(geometryPlanet, materialPlanet);
         planetMesh.position.set(position.x, position.y, position.z);
         const ellipse = getPlanetOrbit(planet)
         scene.add(planetMesh, ellipse);
+        // scene.add(planetMesh)
     });
 
     renderer.render(scene, camera);
@@ -119,9 +127,9 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
-;
 
-
+// const axesHelper = new THREE.AxesHelper( .5 );
+// scene.add(axesHelper)
 
 // Test1 display a cube
 // const scene = new THREE.Scene();
