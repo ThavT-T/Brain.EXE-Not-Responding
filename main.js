@@ -41,10 +41,37 @@ planets.forEach(planet => {
     scene.add(planetMesh);
 });
 
-// nearEarthObjects.forEach(object => {
-//     const mesh     = object.getObjectMesh();
-//     scene.add(mesh);
-// });
+    // Calculate radial distance
+    const r = (a * (1 - e * e)) / (1 + e * Math.cos(trueAnomaly));
+
+    // calculate coordinate x, y, z
+    const x = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode) - Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode));
+    const y = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode) + Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode));
+    const z = r * (Math.sin(trueAnomaly + argumentPerihapsis) * Math.sin(i));
+
+    return { x, y, z };
+
+
+function getPlanetOrbit(planet) {
+    const a = planet.a
+    const e = planet.e
+    const i = planet.i
+    const semiMinorAxis = a * Math.sqrt(1 - (Math.pow(e, 2  )));
+
+    const curve = new THREE.EllipseCurve(0, 0, a, semiMinorAxis, 0, 2 * Math.PI, false, 0);
+    const points = curve.getPoints(50);
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineBasicMaterial({color: 0xff0001f});
+    const ellipse = new THREE.Line(geometry, material);
+
+    const offset = Math.sqrt((a ** 2) - (semiMinorAxis ** 2))
+    ellipse.translateZ(-offset)
+    ellipse.rotateZ(THREE.MathUtils.degToRad(planet.longitudeAscendingNode));
+    ellipse.rotateX(THREE.MathUtils.degToRad(i));
+    ellipse.rotateZ(THREE.MathUtils.degToRad(planet.longitudePerihelion - planet.longitudeAscendingNode));
+
+    return ellipse
+}
 
 // Turning planets animation
 function animate(t) {
@@ -52,8 +79,10 @@ function animate(t) {
     t *= 0.001; // time in second
     // Adjust each planet at the scene
     planets.forEach(planet => {
-        const position = planet.getObjectPosition(t); // calculate actual position of the planet
-        const planetMesh = planet.getObjectMesh();
+        const position = getPlanetPosition(planet, t); // calculate actual position of the planet
+        const geometryPlanet = new THREE.SphereGeometry(planet.radius/63780, 16, 16);
+        const materialPlanet = new THREE.MeshBasicMaterial({ color: planet.color });
+        const planetMesh     = new THREE.Mesh(geometryPlanet, materialPlanet);
         planetMesh.position.set(position.x, position.y, position.z);
     });
 
