@@ -32,6 +32,7 @@ scene.add(sun);
 // Parameters for each planets of the solar system, a: semiMajorAxis, e:eccentricity, i:inclinaison
 import { nearEarthObject } from './readNasaValues.js';
 import { planets } from './readNasaValues.js';
+import { materialShininess } from "three/webgpu";
 
 console.log(nearEarthObject)
 console.log(planets)
@@ -96,17 +97,6 @@ function animate(t) {
     // scene.clear(); // Effacer la scène pour ne pas dessiner plusieurs fois
     scene.add(sun); // keep sun in the center
 }
-
-var placePointId = setInterval(function() {
-    planets.forEach(planet => {
-        const planetMesh = planet.getObjectMesh();
-        const dot = new THREE.SphereGeometry(0.05, 16, 16);
-        const material = new THREE.MeshBasicMaterial({ color: planet.color });
-        const mesh = new THREE.Mesh(dot, material);
-        mesh.position.set(planetMesh.position.x, planetMesh.position.y, planetMesh.position.z);
-        scene.add(mesh);
-    })
-  }, 1000);
 
 // Positionner la caméra
 camera.position.set(0, 0, 5);
