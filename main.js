@@ -30,17 +30,11 @@ scene.add(sun);
 // ]
 
 // Parameters for each planets of the solar system, a: semiMajorAxis, e:eccentricity, i:inclinaison
-const planets = [
-    { name: "Mercury", a: 0.387098,  e: 0.20563,   i: 7.00497902, longitudeAscendingNode: 48.33076593,  longitudePerihelion: 29.124,   color: 0xffbf00 },
-    { name: "Venus",   a: 0.723332,  e: 0.006772,  i: 3.39467605, longitudeAscendingNode: 76.67984255,  longitudePerihelion: 54.884,   color: 0x0000ff },
-    { name: "Earth",   a: 1.0,       e: 0.0167086, i: 7.155,      longitudeAscendingNode: -11.26064,    longitudePerihelion: 114.2078, color: 0x00ff40 },
-    { name: "Mars",    a: 1.523679,  e: 0.0934,    i: 1.84969142, longitudeAscendingNode: 49.55953891,  longitudePerihelion: 286.502,  color: 0xff0000 },
-    { name: "Jupiter", a: 5.2044,    e: 0.0489,    i: 1.30439695, longitudeAscendingNode: 100.47390909, longitudePerihelion: 273.867,  color: 0x8000ff },
-    { name: "Saturn",  a: 9.5826,    e: 0.0565,    i: 2.48599187, longitudeAscendingNode: 113.66242448, longitudePerihelion: 339.392,  color: 0xff00ff },
-    { name: "Uranus",  a: 19.2184,   e: 0.046381,  i: 0.77263783, longitudeAscendingNode: 74.01692503,  longitudePerihelion: 96.99886, color: 0x00ffff },
-    { name: "Neptune", a: 30.110387, e: 0.009456,  i: 1.77004347, longitudeAscendingNode: 131.78422574, longitudePerihelion: 276.336,  color: 0x80ff00},
-];
+import { nearEarthObject } from './readNasaValues.js';
+import { planets } from './readNasaValues.js';
 
+console.log(nearEarthObject)
+console.log(planets)
 // Creation of orbits or each planets
 function getPlanetPosition(planet, t) { 
     const a = planet.a; // semiMajorAxis
