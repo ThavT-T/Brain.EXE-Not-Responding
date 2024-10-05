@@ -95,20 +95,3 @@ export const nearEarthObject = (async () => {
         return null; // Return null in case of an error
     }
 })();
-
-// function transformToAstronomicalObjectArray(arr) {
-//     return arr.map(item => new AstronomicalObject(
-//         item.name || "Unknown",
-//         item.semiMajorAxis || 0,
-//         item.eccentricity || 0,
-//         item.inclination || 0,
-//         item.longitudeAscendingNode || 0,
-//         item.longitudePerihelion || 0,
-//         item.color || 0xffffff, // Default color white
-//         item.radius || 1 // Default radius
-//     ));
-// }
-
-// transformToAstronomicalObjectArray(nearEarthObject)
-    
-// });

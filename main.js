@@ -6,6 +6,8 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 ); // how I'm watching things
 
 const renderer = new THREE.WebGLRenderer();
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
 renderer.setSize( window.innerWidth, window.innerHeight);
 
 document.body.appendChild( renderer.domElement ); //add to the HTML doc
@@ -63,9 +65,20 @@ function animate(t) {
     //     planetMesh.position.set(position.x, position.y, position.z);
     // });
 
-    renderer.render(scene, camera);
+    render();
     // scene.clear(); // Effacer la scène pour ne pas dessiner plusieurs fois
     scene.add(sun); // keep sun in the center
+}
+
+function render() {
+    renderer.render(scene, camera);
+    raycaster.setFromCamera( pointer, camera );
+
+    //https://github.com/mrdoob/three.js/blob/master/examples/webgl_interactive_cubes.html
+    const intersects = raycaster.intersectObjects( scene.children, false );
+    if (intersects.length > 0) {
+        intersects[0].object.position.x = 24323;
+    }
 }
 
 var placePointId = setInterval(function() {
@@ -93,3 +106,8 @@ window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 });
+
+document.addEventListener( 'mousemove', (event) => {
+    pointer.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    pointer.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+} );
