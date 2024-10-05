@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'U001 Regular';
+    src: url('./fonts/u001-reg.ttf') format('truetype');
+}
+
+body {
+    background-color: #0f0f0f;
+}
+
+p {
+    margin: auto;
+    color: #dfdfdf;
+    text-align: center;
+    font-family: 'U001 Regular';
+}
+
+.buttons {
+    border: 2px solid yellow;
+    background-color: #2f2f00;
+    color: yellow;
+    font-size: 48px;
+    font-family: 'U001 Regular';
+    border-radius: 10px;
+    cursor: pointer;
+    transition-duration: 250ms;
+    height: 80px;
+    margin-top: 10px;
+}
+
+.buttons:hover {
+    background-color: yellow;
+    color: #2f2f00;
+}
+
+.collapsible {
+    background-color: #1f1f1f;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    width: 90%;
+    position: relative;
+    border: none;
+    text-align: center;
+    outline: none;
+    font-size: 30px;
+    font-family: 'U001';
+    border: 2px solid white;
+    border-radius: 15px;
+  }
+  
+  .active, .collapsible:hover {
+    background-color: #555;
+  }
+  
+  .content {
+    padding: 0 18px;
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+    overflow: hidden;
+    background-color: #2f2f2f;
+    border: 1px solid white;
+    border-radius: 15px;
+    width: 100%;
+  }
+
