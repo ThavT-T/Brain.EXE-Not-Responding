@@ -71,7 +71,7 @@ function animate(t) {
 var placePointId = setInterval(function() {
     planets.forEach(planet => {
         const planetMesh = planet.getObjectMesh();
-        const dot = new THREE.SphereGeometry(0.05, 16, 16);
+        const dot = new THREE.SphereGeometry(planet.radius/6378*0.05, 16, 16);
         const material = new THREE.MeshBasicMaterial({ color: planet.color });
         const mesh = new THREE.Mesh(dot, material);
         mesh.position.set(planetMesh.position.x, planetMesh.position.y, planetMesh.position.z);
