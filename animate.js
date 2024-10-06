@@ -105,13 +105,6 @@ export function initSolarSystem(astronomicalObjects) {
 
     });
 
-    // TODO Maybe use this to zoom to a planet?
-    // function lerpToPoint(point, alpha) {
-    //     while (camera.position.distanceTo(point) > 1) {
-    //         camera.position.lerp(point, alpha);
-    //     }
-    // }
-
     document.addEventListener('click', (event) => {
         // const filteredChildren = scene.children.filter(child => child.constructor.name == "Mesh");
         // const intersects = raycaster.intersectObjects(filteredChildren, false);
@@ -123,23 +116,31 @@ export function initSolarSystem(astronomicalObjects) {
         // }
         // Raycasting for interaction
         //https://github.com/mrdoob/three.js/blob/master/examples/webgl_interactive_cubes.html
-        astronomicalObjects.forEach(astronomicalObject => { 
+        astronomicalObjects.forEach(astronomicalObject => {
             const astronomicalObjectMesh = astronomicalObject.getObjectMesh();
-            // const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             if (intersects.length > 0) {
-                document.getElementById('planet-info').innerHTML = astronomicalObject.info 
-                document.getElementById('planet-info').style.color = 'white'
-
-            }
-            
-            const intersectsSun = raycaster.intersectObject(sun, false);
-            if(intersectsSun.length > 0){
-                document.getElementById('Sun-info').innerHTML = "It’s the star of our solar system! \nIt’s thanks to the sun’s gravity that all the planets can hold together \nIt can produce solar storms which can disturb the Earth’s magnetic field and produce radio blackouts, power outages, and auroras"; 
-                document.getElementById('Sun-info').style.color = 'yellow'
+                if (document.getElementById('planet-info').innerHTML == '') {
+                    document.getElementById('planet-info').innerHTML = astronomicalObject.info 
+                    document.getElementById('planet-info').style.color = 'white'
+                } else {
+                    document.getElementById('planet-info').innerHTML = ''
+                }
             }
             
         })
+        
+        const intersectsSun = raycaster.intersectObject(sun, false);
+        if (intersectsSun.length > 0) {
+            console.log("Entered")
+            if (document.getElementById('Sun-info').innerHTML == '') {
+                document.getElementById('Sun-info').innerHTML   = "It’s the star of our solar system! \nIt’s thanks to the Sun’s gravity that all the planets can hold together \nIt can produce solar storms which can disturb the Earth’s magnetic field and produce radio blackouts, power outages, and auroras";   
+                document.getElementById('Sun-info').style.color = 'yellow'
+            } else {
+                document.getElementById('Sun-info').innerHTML = ''
+            }
+        }
+        
     });
 }
 
