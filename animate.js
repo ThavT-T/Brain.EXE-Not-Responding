@@ -38,7 +38,7 @@ export function initSolarSystem(astronomicalObjects) {
         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
         const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
         scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
-        // scene.add(astronomicalObjectMesh);
+        // scene.add(astronomicalObjectMesh);/ window.innerHeight
     });
 
     function getOrbit(aObject) {
