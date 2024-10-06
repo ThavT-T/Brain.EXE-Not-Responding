@@ -91,8 +91,9 @@ export function initSolarSystem(astronomicalObjects) {
 
     // Update pointer for mouse movement
     document.addEventListener('mousemove', (event) => {
-        pointer.x = (event.clientX / window.innerWidth) * 2 - 1; // Calculate normalized mouse x position
-        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1; // Calculate normalized mouse y position
+        var rect = renderer.domElement.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; // Calculate normalized mouse x position
+        pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; // Calculate normalized mouse y position
     });
 
     // TODO Maybe use this to zoom to a planet?
