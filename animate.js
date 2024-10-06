@@ -1,22 +1,37 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+const scaleX = 0.75
+const scaleY = 0.75
+
 export function initSolarSystem(astronomicalObjects) {
     // Create the scene, camera, renderer, and raycaster
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.2, 1000); // Camera to view the scene
+    const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.2, 1e+20); // Camera to view the scene
     const renderer = new THREE.WebGLRenderer(); // Renderer to draw the scene
     const raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 0, -1, 0, 10000000)); // Raycaster for object interaction
     const pointer = new THREE.Vector2(); // Pointer for mouse position
     // Set renderer size and append the canvas to the document
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement); // Add renderer output to the HTML document
+    renderer.setSize(window.innerWidth * scaleX, window.innerHeight * scaleY);
+    var canvas = renderer.domElement; // Add renderer output to the HTML document
+    canvas.style.border = 'white solid 4px'
+    canvas.style.borderRadius = '15px'
+    document.body.appendChild(canvas)
+    
 
     // Creation of the Sun
     const geometrySun = new THREE.SphereGeometry(0.2, 32, 32); // Geometry for the Sun
-    const materialSun = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // Material for the Sun
+    // const materialSun = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // Material for the Sun
+    const materialSun = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load("textures/Sun.jpg") } ); // Material for the Sun
     const sun = new THREE.Mesh(geometrySun, materialSun); // Create the Sun mesh
     scene.add(sun); // Add the Sun to the scene
+
+    const geometrySkybox = new THREE.SphereGeometry(1000, 24, 24);
+    const materialSkybox = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load("textures/Skybox.jpg") } );
+    materialSkybox.side = THREE.DoubleSide;
+    const skybox = new THREE.Mesh(geometrySkybox, materialSkybox);
+    scene.add(skybox)
+
 
     // Add astronomicalObjects (planets, etc.) to the scene
     astronomicalObjects.forEach(astronomicalObject => {
@@ -69,7 +84,7 @@ export function initSolarSystem(astronomicalObjects) {
 
     // Adjust renderer size on window resize
     window.addEventListener('resize', () => {
-        renderer.setSize(window.innerWidth, window.innerHeight); // Update renderer size
+        renderer.setSize(window.innerWidth * scaleX, window.innerHeight * scaleY); // Update renderer size
         camera.aspect = window.innerWidth / window.innerHeight; // Update camera aspect ratio
         camera.updateProjectionMatrix(); // Update the camera's projection matrix
     });
@@ -103,7 +118,8 @@ export function initSolarSystem(astronomicalObjects) {
             // const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             if (intersects.length > 0) {
-                document.getElementById('planet-info').innerHTML = astronomicalObject.info;
+                document.getElementById('planet-info').innerHTML = astronomicalObject.info
+                document.getElementById('planet-info').style.color = 'white'
             }
         })
     });
