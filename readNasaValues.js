@@ -2,7 +2,7 @@ import * as THREE from "three"
 
 // Class Definition
 class AstronomicalObject {
-    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, info, texture) {
+    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, info, texture, doOrbit) {
         this.name = name;
         this.a = semiMajorAxis;  // Semi-major axis (a)
         this.e = eccentricity;   // Eccentricity (e)
@@ -11,6 +11,7 @@ class AstronomicalObject {
         this.longitudePerihelion = longitudePerihelion;        // Argument of perihelion
         this.color = color;      // Color
         this.radius = radius
+        this.doOrbit = doOrbit
 
         const geometryPlanet = new THREE.SphereGeometry(this.radius / 6378 * 0.1, 16, 16);
         // const materialPlanet = new THREE.MeshBasicMaterial({ color: this.color });
@@ -60,7 +61,6 @@ class AstronomicalObject {
     }
 }
 
-// Creating planets as an array of AstronomicalObject instances
 export const planets = [
     new AstronomicalObject("Mercury",  0.387098,   0.20563,    7.00497902,  48.33076593,   29.124,    0xffbf00, 2439.7, "Closest planet of the sun. Diameter at its equator = 4 878 km. Average distance from the sun = 58M of km (0,39 UA). Complete rotation on its axis = 58 days 16 hours. Orbit around the Sun = 88 days. Moons: 0", "textures/Mercury.jpg"),
     new AstronomicalObject("Venus",    0.723332,   0.006772,   3.39467605,  76.67984255,   54.884,    0x0000ff, 6051.8, "Brightest object in the Earth sky after the Sun and the moon. Diameter at its equator = 12 104 km. Average distance from the sun = 108M of km (0,72 UA). Complete rotation on its axis = 243 days. Orbit around the Sun = 224,7 days. Moons: 0", "textures/Venus.png"),
@@ -73,41 +73,65 @@ export const planets = [
 
 ];
 
+
 const jsonUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
 
-// Fetching near-Earth objects and creating AstronomicalObject instances
-export const nearEarthObject = (async () => {
-    try {
-        const response = await fetch(jsonUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-
-        const jsonData = await response.json();
-        
-        // Creating a list of AstronomicalObject instances from the fetched data
-        const objects = jsonData.map(obj => {
-            const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2; // Average of q_au_1 and q_au_2
-            return new AstronomicalObject(
-                obj.object_name || obj.object,  // Name of the object
-                semiMajorAxis,                   // Semi-major axis (a)
-                parseFloat(obj.e),               // Eccentricity (e)
-                parseFloat(obj.i_deg),           // Inclination (i)
-                parseFloat(obj.node_deg),        // Longitude of ascending node
-                parseFloat(obj.w_deg),           // Argument of perihelion
-                0xffffff * Math.random()         // Random color
-            );
+// Function to fetch and return near-Earth objects
+export const getNearEarthObjects = () => {
+    return fetch(jsonUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            const objects = jsonData.map(obj => {
+                const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2; // Average
+                return new AstronomicalObject(
+                    obj.object_name || obj.object,
+                    semiMajorAxis,
+                    parseFloat(obj.e),
+                    parseFloat(obj.i_deg),
+                    parseFloat(obj.node_deg),
+                    parseFloat(obj.w_deg),
+                    0xffffff * Math.random()
+                );
+            });
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
         });
+};
 
-        return objects; // Return the array of AstronomicalObject instances
-    } catch (error) {
-        console.error('Error fetching the JSON file:', error);
-        return null; // Return null in case of an error
+//var csv is the CSV file with headers
+function csvJSON(csv){
+
+    var lines=csv.split("\n");
+  
+    var result = [];
+  
+    // NOTE: If your columns contain commas in their values, you'll need
+    // to deal with those before doing the next step 
+    // (you might convert them to &&& or something, then covert them back later)
+    // jsfiddle showing the issue https://jsfiddle.net/
+    var headers=lines[0].split(",");
+  
+    for(var i=1;i<lines.length;i++){
+  
+        var obj = {};
+        var currentline=lines[i].split(",");
+  
+        for(var j=0;j<headers.length;j++){
+            obj[headers[j]] = currentline[j];
+        }
+  
+        result.push(obj);
+  
     }
-})();
-// // Parameters for each planets of the solar system, a: semiMajorAxis, e:eccentricity, i:inclinaison
-// import { nearEarthObject } from './readNasaValues.js';
-// import { planets } from './readNasaValues.js';
-// import { initSolarSystem } from './animate.js';
-
-// initSolarSystem(planets)
+  
+    //return result; //JavaScript object
+    return JSON.stringify(result); //JSON
+  }

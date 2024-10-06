@@ -1,5 +1,11 @@
-import { nearEarthObject } from './readNasaValues.js';
-import { planets } from './readNasaValues.js';
+import { getNearEarthObjects, planets } from './readNasaValues.js';
 import { initSolarSystem } from './animate.js';
 
-initSolarSystem(planets)
+getNearEarthObjects().then(nearEarthObjects => {
+    if (Array.isArray(nearEarthObjects)) {
+        initSolarSystem(nearEarthObjects);
+    } else {
+        console.error('Fetched data is not an array:', nearEarthObjects);
+    }
+});
+// initSolarSystem(planets)

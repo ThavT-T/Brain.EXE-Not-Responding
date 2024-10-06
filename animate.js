@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-export function initSolarSystem(astronomicalObjects) {
+export function initSolarSystem(astronomicalObjects, isOrbits) {
     // Create the scene, camera, renderer, and raycaster
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.2, 1000); // Camera to view the scene
@@ -19,14 +19,18 @@ export function initSolarSystem(astronomicalObjects) {
     const sun = new THREE.Mesh(geometrySun, materialSun); // Create the Sun mesh
     scene.add(sun); // Add the Sun to the scene
 
-    // Add astronomicalObjects (planets, etc.) to the scene
-    astronomicalObjects.forEach(astronomicalObject => {
-        const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
-        const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
-        scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
-        // scene.add(astronomicalObjectMesh);
-    });
+    if (Array.isArray(astronomicalObjects)){
+        // Add astronomicalObjects (planets, etc.) to the scene
+        astronomicalObjects.forEach(astronomicalObject => {
+            const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
+            // if(isOrbits){
+                const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
+                scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
+            // }else{
+                // scene.add(astronomicalObjectMesh); // Add the mesh to the scene
 
+            // }
+        })}else{console.log("astronomicalObjects not an array")};
     function getOrbit(aObject) {
         var geometry = new THREE.BufferGeometry();
         var material = new THREE.LineBasicMaterial({ color: 0xffffff });
@@ -38,18 +42,19 @@ export function initSolarSystem(astronomicalObjects) {
         var line = new THREE.Line(geometry, material);
         return line
     }
-
     // Animation loop for moving the astronomicalObjects
     function animate(t) {
         requestAnimationFrame(animate); // Create the animation loop
         t *= 0.001; // Convert time to seconds
 
-        // Adjust each astronomicalObject's position in the scene based on time
-        astronomicalObjects.forEach(astronomicalObject => {
-            const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
-            const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
-            astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
-        });
+        if (Array.isArray(astronomicalObjects)){
+            // Adjust each astronomicalObject's position in the scene based on time
+            astronomicalObjects.forEach(astronomicalObject => {
+               const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
+               const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
+               astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
+            })}else{console.log("astronomicalObjects not an array")};
+
 
         render(); // Render the scene
         scene.add(sun); // Keep the Sun in the center
