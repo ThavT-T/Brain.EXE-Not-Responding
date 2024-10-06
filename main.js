@@ -26,5 +26,6 @@ getPHAasteroids().then(nearEarthObjects => {
         }
     }).then(() => initSolarSystem(allObjects));
     
+
 // console.log(allObjects)
 // initSolarSystem(allObjects)

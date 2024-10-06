@@ -184,7 +184,7 @@ export const getNEOasteroids = () => {
                     parseFloat(obj.om),                 // Longitude of ascending node
                     parseFloat(obj.w),                  // Argument of perihelion
                     0xffffff,          
-                    4000,
+                    1000,
                     "",
                     "textures/Rock.jpg"           
                 );});
@@ -215,9 +215,9 @@ export const getPHAasteroids = () => {
                     parseFloat(obj.om),                 // Longitude of ascending node
                     parseFloat(obj.w),                  // Argument of perihelion
                     0xffffff,          
-                    4000,
+                    1000,
                     "",
-                    "textures/Rock.jpg"           
+                    "textures/Red.webp"           
                 );});
             return objects;
         })
