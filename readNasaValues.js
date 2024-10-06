@@ -217,7 +217,7 @@ export const getPHAasteroids = () => {
                     0xffffff,          
                     1000,
                     "",
-                    "textures/Red.webp"           
+                    "textures/Rock.jpg"           
                 );});
             return objects;
         })
