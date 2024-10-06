@@ -20,10 +20,6 @@ class AstronomicalObject {
     getObjectPosition(t) { 
         const a = this.a; // semiMajorAxis
         const e = this.e; // eccentricity
-        const i = THREE.MathUtils.degToRad(this.i); // inclinaison
-        const longitudeAscendingNode = THREE.MathUtils.degToRad(this.longitudeAscendingNode); 
-        const longitudePerihelion = THREE.MathUtils.degToRad(this.longitudePerihelion); 
-        const argumentPerihapsis = longitudePerihelion - longitudeAscendingNode;
         // mean anomaly (M = n * t, avec n = √(GM/a³))
         const n = Math.sqrt(1 / Math.pow(a, 3)); // ici G et M sont normalisés pour un système solaire
         const meanAnomaly = n * t; // mean anomaly
@@ -34,10 +30,20 @@ class AstronomicalObject {
             E = meanAnomaly + e * Math.sin(E);
         }
         const trueAnomaly = 2 * Math.atan2(Math.sqrt(1 + e) * Math.sin(E / 2), Math.sqrt(1 - e) * Math.cos(E / 2)); // true anomaly
-    
+
+        return this.propagate(trueAnomaly);
+    }
+
+    propagate(trueAnomaly) {
+        const a = this.a; // semiMajorAxis
+        const e = this.e; // eccentricity
+        const i = THREE.MathUtils.degToRad(this.i); // inclinaison
+        const longitudeAscendingNode = THREE.MathUtils.degToRad(this.longitudeAscendingNode); 
+        const longitudePerihelion = THREE.MathUtils.degToRad(this.longitudePerihelion); 
+        const argumentPerihapsis = longitudePerihelion - longitudeAscendingNode;
         // Calculate radial distance
         const r = (a * (1 - e * e)) / (1 + e * Math.cos(trueAnomaly));
-    
+
         // calculate coordinate x, y, z
         const x = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode) - Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode));
         const y = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode) + Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode));

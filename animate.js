@@ -22,8 +22,21 @@ export function initSolarSystem(astronomicalObjects) {
     // Add astronomicalObjects (planets, etc.) to the scene
     astronomicalObjects.forEach(astronomicalObject => {
         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
-        scene.add(astronomicalObjectMesh); // Add the mesh to the scene
+        const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
+        scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
     });
+
+    function getOrbit(aObject) {
+        var geometry = new THREE.BufferGeometry();
+        var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+        var linePoints = [];
+        for (var i = 0; i <= 6.28; i += 0.01) {
+            linePoints.push(aObject.propagate(i));
+        }
+        geometry.setFromPoints(linePoints);
+        var line = new THREE.Line(geometry, material);
+        return line
+    }
 
     // Animation loop for moving the astronomicalObjects
     function animate(t) {
@@ -53,17 +66,17 @@ export function initSolarSystem(astronomicalObjects) {
         // }
     }
 
-    // Add point markers for astronomicalObjects
-    var placePointId = setInterval(function() {
-        astronomicalObjects.forEach(astronomicalObject => {
-            const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
-            const dot = new THREE.SphereGeometry(astronomicalObject.radius / 6378 * 0.05, 16, 16); // Geometry for the marker
-            const material = new THREE.MeshBasicMaterial({ color: astronomicalObject.color }); // Material for the marker
-            const mesh = new THREE.Mesh(dot, material); // Create the marker mesh
-            mesh.position.set(astronomicalObjectMesh.position.x, astronomicalObjectMesh.position.y, astronomicalObjectMesh.position.z); // Set marker position to match the object
-            scene.add(mesh); // Add the marker to the scene
-        });
-    }, 1000); // Update markers every second
+    // // Add point markers for astronomicalObjects
+    // var placePointId = setInterval(function() {
+    //     astronomicalObjects.forEach(astronomicalObject => {
+    //         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
+    //         const dot = new THREE.SphereGeometry(astronomicalObject.radius / 6378 * 0.05, 16, 16); // Geometry for the marker
+    //         const material = new THREE.MeshBasicMaterial({ color: astronomicalObject.color }); // Material for the marker
+    //         const mesh = new THREE.Mesh(dot, material); // Create the marker mesh
+    //         mesh.position.set(astronomicalObjectMesh.position.x, astronomicalObjectMesh.position.y, astronomicalObjectMesh.position.z); // Set marker position to match the object
+    //         scene.add(mesh); // Add the marker to the scene
+    //     });
+    // }, 1000); // Update markers every second
 
     // Position the camera
     camera.position.set(0, 0, 5); // Set the camera's position
