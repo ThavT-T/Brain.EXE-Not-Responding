@@ -12,7 +12,7 @@ class AstronomicalObject {
         this.radius = radius
         this.doOrbit = doOrbit
 
-        const geometryPlanet = new THREE.SphereGeometry(this.radius / 6378 * 0.1, 16, 16);
+        const geometryPlanet = new THREE.SphereGeometry(this.radius/100000, 16, 16);
         // const materialPlanet = new THREE.MeshBasicMaterial({ color: this.color });
         const texturePlanet = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load(texture) } );
         this.mesh = new THREE.Mesh(geometryPlanet, texturePlanet);
@@ -70,7 +70,7 @@ class PlanetObject extends AstronomicalObject {
         const longitudeAscendingNode_adjusted = longitudeAscendingNode_0 + delta_longitudeAscendingNode * T;
         const longitudePerihelion_adjusted = longitudePerihelion_0 + delta_longitudePerihelion * T;
 
-        super(name, semiMajorAxis_adjusted, eccentricity_adjusted, inclination_adjusted, longitudeAscendingNode_adjusted, longitudePerihelion_adjusted, color, radius, info, texture)
+        super(name, semiMajorAxis_adjusted, eccentricity_adjusted, inclination_adjusted, longitudeAscendingNode_adjusted, longitudePerihelion_adjusted, color, radius, info, texture, true);
     }
 }
 
@@ -121,7 +121,7 @@ export const getNearEarthObjects = () => {
                     parseFloat(obj.i_deg),
                     parseFloat(obj.node_deg),
                     parseFloat(obj.w_deg),
-                    0xffffff * Math.random()
+                    0xffffff
                 );
             });
             return objects;
@@ -153,7 +153,7 @@ export const getNEOcomets = () => {
                     parseFloat(obj.om),                 // Longitude of ascending node
                     parseFloat(obj.w),                  // Argument of perihelion
                     0xffffff,          
-                    4000,
+                    0.0000000,
                     "",
                     "textures/Rock.jpg"           
                 );});

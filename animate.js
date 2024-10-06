@@ -42,15 +42,20 @@ export function initSolarSystem(astronomicalObjects) {
     });
 
     function getOrbit(aObject) {
-        var geometry = new THREE.BufferGeometry();
-        var material = new THREE.LineBasicMaterial({ color: 0xffffff });
-        var linePoints = [];
-        for (var i = 0; i <= 6.28; i += 0.01) {
-            linePoints.push(aObject.propagate(i));
+        if (aObject.doOrbit) {
+            var geometry = new THREE.BufferGeometry();
+            var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+            var linePoints = [];
+            for (var i = 0; i <= 6.28; i += 0.01) {
+                linePoints.push(aObject.propagate(i));
+            }
+            geometry.setFromPoints(linePoints);
+            var line = new THREE.Line(geometry, material);
+            return line
+        } else {
+            return new THREE.Mesh();
         }
-        geometry.setFromPoints(linePoints);
-        var line = new THREE.Line(geometry, material);
-        return line
+
     }
     // Animation loop for moving the astronomicalObjects
     function animate(t) {
