@@ -1,8 +1,7 @@
-import * as THREE from "three"
-
+import * as THREE from "./node_modules/three/build/three.module.js"
 // Class Definition
 class AstronomicalObject {
-    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, info, texture) {
+    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, info, texture, doOrbit) {
         this.name = name;
         this.a = semiMajorAxis;  // Semi-major axis (a) // in UA
         this.e = eccentricity;   // Eccentricity (e) 
@@ -11,8 +10,9 @@ class AstronomicalObject {
         this.longitudePerihelion = longitudePerihelion;        // Argument of perihelion // in deg
         this.color = color;      // Color
         this.radius = radius
+        this.doOrbit = doOrbit
 
-        const geometryPlanet = new THREE.SphereGeometry(this.radius / 6378 * 0.1, 16, 16);
+        const geometryPlanet = new THREE.SphereGeometry(this.radius/100000, 16, 16);
         // const materialPlanet = new THREE.MeshBasicMaterial({ color: this.color });
         const texturePlanet = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load(texture) } );
         this.mesh = new THREE.Mesh(geometryPlanet, texturePlanet);
@@ -70,7 +70,7 @@ class PlanetObject extends AstronomicalObject {
         const longitudeAscendingNode_adjusted = longitudeAscendingNode_0 + delta_longitudeAscendingNode * T;
         const longitudePerihelion_adjusted = longitudePerihelion_0 + delta_longitudePerihelion * T;
 
-        super(name, semiMajorAxis_adjusted, eccentricity_adjusted, inclination_adjusted, longitudeAscendingNode_adjusted, longitudePerihelion_adjusted, color, radius, info, texture)
+        super(name, semiMajorAxis_adjusted, eccentricity_adjusted, inclination_adjusted, longitudeAscendingNode_adjusted, longitudePerihelion_adjusted, color, radius, info, texture, true);
     }
 }
 
@@ -96,44 +96,216 @@ export const planets = [
     new PlanetObject("Saturn",   9.5826,    -0.00125060,  0.0565,     -0.00050991,  2.48599187,  0.00193609, 113.66242448, -0.28867794,  92.59887831, -0.41897216, Math.floor(Date.now() / 1000), 0xff00ff, 58232,  "Saturn has the most complex and spectacular rings of our solar system \nDiameter at its equator = 140 000 km \nAverage distance from the sun = 1 427M of km (9,5 UA) \nComplete rotation on its axis = 10 hours 33 minutes \nOrbit around the Sun = 29,5 years \nMoons: 62", "textures/Saturn.jpg"),
     new PlanetObject("Uranus",   19.2184,   -0.00196176,  0.046381,   -0.00004397,  0.77263783, -0.00242939, 74.01692503,   0.04240589,  170.95427630, 0.40805281, Math.floor(Date.now() / 1000), 0x00ffff, 25362,  "Uranus is a ice giant \nDiameter at its equator = 51 100 km \nAverage distance from the sun = 2 870M of km (19,2 UA) \nComplete rotation on its axis = 17 hours 14 minutes \nOrbit around the Sun = 84 years \nMoons: 27", "textures/Uranus.jpg"),
     new PlanetObject("Neptune",  30.110387,  0.00026291,  0.009456,    0.00005105,  1.77004347,  0.00035372, 131.78422574, -0.00508664,  44.96476227, -0.32241464, Math.floor(Date.now() / 1000), 0x80ff00, 24397,  "The most distant planet of the Sun, it’s also an ice giant, it’s the only planet not visible to the naked eye in the earth sky \nDiameter at its equator = 49 500  km \nAverage distance from the sun = 4 497M of km (30,1 UA) \nComplete rotation on its axis = 16 hours 7 minutes \nOrbit around the Sun = 165 years days \nMoons: 14", "textures/Neptune.jpg")
-
 ];
 
-const jsonUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
 
-// Fetching near-Earth objects and creating AstronomicalObject instances
-export const nearEarthObject = (async () => {
-    try {
-        const response = await fetch(jsonUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
+const nearEarthObjectsUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
 
-        const jsonData = await response.json();
-        
-        // Creating a list of AstronomicalObject instances from the fetched data
-        const objects = jsonData.map(obj => {
-            const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2; // Average of q_au_1 and q_au_2
-            return new AstronomicalObject(
-                obj.object_name || obj.object,  // Name of the object
-                semiMajorAxis,                   // Semi-major axis (a)
-                parseFloat(obj.e),               // Eccentricity (e)
-                parseFloat(obj.i_deg),           // Inclination (i)
-                parseFloat(obj.node_deg),        // Longitude of ascending node
-                parseFloat(obj.w_deg),           // Argument of perihelion
-                0xffffff * Math.random()         // Random color
-            );
+// Function to fetch and return near-Earth objects
+export const getNearEarthObjects = () => {
+    return fetch(nearEarthObjectsUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            const objects = jsonData.map(obj => {
+                const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2; // Average
+                return new AstronomicalObject(
+                    obj.object_name || obj.object,
+                    semiMajorAxis,
+                    parseFloat(obj.e),
+                    parseFloat(obj.i_deg),
+                    parseFloat(obj.node_deg),
+                    parseFloat(obj.w_deg),
+                    0xffffff
+                );
+            });
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
         });
+};
 
-        return objects; // Return the array of AstronomicalObject instances
-    } catch (error) {
-        console.error('Error fetching the JSON file:', error);
-        return null; // Return null in case of an error
-    }
-})();
-// // Parameters for each planets of the solar system, a: semiMajorAxis, e:eccentricity, i:inclinaison
-// import { nearEarthObject } from './readNasaValues.js';
-// import { planets } from './readNasaValues.js';
-// import { initSolarSystem } from './animate.js';
+const NEOCometsURL = './outsideObjects/NEOcomets.json';
 
-// initSolarSystem(planets)
+// Function to fetch and return near-Earth objects
+export const getNEOcomets = () => {
+    return fetch(NEOCometsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    0.0000000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+const NEOAsteroidsURL = './outsideObjects/NEOasteroids.json';
+export const getNEOasteroids = () => {
+    return fetch(NEOAsteroidsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    1000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+const PHAasteroidsURL = './outsideObjects/PHAasteroids.json';
+export const getPHAasteroids = () => {
+    return fetch(PHAasteroidsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    1000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+// // Function to convert CSV data to JSON format
+// function csvJSON(csv) {
+//     // console.log(csv)
+//     var lines = csv.split("\n"); // Split into rows
+//     var result = [];
+//     var headers = lines[0].split(","); // Split header row
+
+//     for (var i = 1; i < lines.length; i++) {
+//         var obj = {};
+//         var currentline = lines[i].split(",");
+
+//         for (var j = 0; j < headers.length; j++) {
+//             obj[headers[j]] = currentline[j]; // Assign CSV values to headers
+//         }
+
+//         result.push(obj);
+//     }
+//     // console.log(result)
+//     return result; // Return JSON array of objects
+// }
+
+// import { csv } from "d3-request"
+// export function getNEOcomets(){
+//     var objects = {}
+//     csv("./outsideObjects/NEOcomets.csv", function(err, data) {
+//         objects = data.map(obj => {
+//         return new AstronomicalObject(
+//             obj.full_name,                           // Name
+//             parseFloat(obj.a),                  // Semi-major axis
+//             parseFloat(obj.e),                  // Eccentricity
+//             parseFloat(obj.i),                  // Inclination
+//             parseFloat(obj.om),                 // Longitude of ascending node
+//             parseFloat(obj.w),                  // Argument of perihelion
+//             0xffffff * Math.random(),           // Random color 
+//             12,
+//             "",
+//             "textures/Venus.png"           
+//         );});
+        
+//         return objects
+//     })
+//     // while(objects == {}) {}
+//     return objects
+// }
+// // console.log("objects",objects);
+// // fetch()
+// // const filereader = new FileReader();
+// // const file = new File("./outsideObjects/NEOcomets.csv")
+// // filereader.readAsText()
+
+// // Function to create an array of AstronomicalObject instances from the CSV data
+// // export const getNEOasteroids = () => {
+// //     // fetch(csvData).then((response) => response.text().then((data) => {jsonData = data}));
+// //     fetch(csvData).then((res) => res.text()).then((text) => {
+// //         var jsonData = csvJSON(text);
+// //         const objects = jsonData.map(obj => {
+// //             console.log("A",obj)
+// //             return new AstronomicalObject(
+// //                 obj.full_name,                           // Name
+// //                 parseFloat(obj.a),                  // Semi-major axis
+// //                 parseFloat(obj.e),                  // Eccentricity
+// //                 parseFloat(obj.i),                  // Inclination
+// //                 parseFloat(obj.om),                 // Longitude of ascending node
+// //                 parseFloat(obj.w),                  // Argument of perihelion
+// //                 0xffffff * Math.random(),           // Random color 
+// //                 12,
+// //                 "",
+// //                 "textures/Venus.png"           
+// //             );
+// //         });
+// //         console.log(jsonData);
+// //         console.log(objects);
+// //         return objects;
+// //     })
+
+
+
+// //     // return objects; // Return list of AstronomicalObject instances
+// // };
+
+// // Test the function
+// // console.log(getNEOasteroids());
+// // getNEOasteroids().then((data) => console.log(data))

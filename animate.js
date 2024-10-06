@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import * as THREE from "./node_modules/three/build/three.module.js";
+import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 const scaleX = 0.75
 const scaleY = 0.75
@@ -44,21 +44,33 @@ export function initSolarSystem(astronomicalObjects) {
     });
 
     function getOrbit(aObject) {
-        var geometry = new THREE.BufferGeometry();
-        var material = new THREE.LineBasicMaterial({ color: 0xffffff });
-        var linePoints = [];
-        for (var i = 0; i <= 6.28; i += 0.01) {
-            linePoints.push(aObject.propagate(i));
+        if (aObject.doOrbit) {
+            var geometry = new THREE.BufferGeometry();
+            var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+            var linePoints = [];
+            for (var i = 0; i <= 6.28; i += 0.01) {
+                linePoints.push(aObject.propagate(i));
+            }
+            geometry.setFromPoints(linePoints);
+            var line = new THREE.Line(geometry, material);
+            return line
+        } else {
+            return new THREE.Mesh();
         }
-        geometry.setFromPoints(linePoints);
-        var line = new THREE.Line(geometry, material);
-        return line
-    }
 
+    }
     // Animation loop for moving the astronomicalObjects
     function animate(t) {
         requestAnimationFrame(animate); // Create the animation loop
         t *= 0.001; // Convert time to seconds
+
+        // if (Array.isArray(astronomicalObjects)){
+        //     // Adjust each astronomicalObject's position in the scene based on time
+        //     astronomicalObjects.forEach(astronomicalObject => {
+        //        const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
+        //        const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
+        //        astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
+        //     })}else{console.log("astronomicalObjects not an array")};
 
         // Adjust each astronomicalObject's position in the scene based on time
         astronomicalObjects.forEach(astronomicalObject => {
@@ -66,7 +78,7 @@ export function initSolarSystem(astronomicalObjects) {
             const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
             astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
         });
-
+        
         render(); // Render the scene
         scene.add(sun); // Keep the Sun in the center
     }
