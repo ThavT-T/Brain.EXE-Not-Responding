@@ -4,11 +4,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 export function initSolarSystem(astronomicalObjects) {
     // Create the scene, camera, renderer, and raycaster
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000); // Camera to view the scene
+    const camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.2, 1000); // Camera to view the scene
     const renderer = new THREE.WebGLRenderer(); // Renderer to draw the scene
-    const raycaster = new THREE.Raycaster(); // Raycaster for object interaction
+    const raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, 0, -1, 0, 10000000)); // Raycaster for object interaction
     const pointer = new THREE.Vector2(); // Pointer for mouse position
-
     // Set renderer size and append the canvas to the document
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement); // Add renderer output to the HTML document
@@ -25,6 +24,7 @@ export function initSolarSystem(astronomicalObjects) {
         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
         const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
         scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
+        // scene.add(astronomicalObjectMesh);
     });
 
     function getOrbit(aObject) {
@@ -58,26 +58,7 @@ export function initSolarSystem(astronomicalObjects) {
     function render() {
         renderer.render(scene, camera); // Render the scene from the perspective of the camera
         raycaster.setFromCamera(pointer, camera); // Update the raycaster with the mouse pointer position
-
-        // Raycasting for interaction
-        //https://github.com/mrdoob/three.js/blob/master/examples/webgl_interactive_cubes.html
-        const intersects = raycaster.intersectObjects(scene.children, false); // Check for intersections with objects in the scene
-        // if (intersects.length > 0) {
-        //     intersects[0].object.position.x = 24323; // Example interaction (commented out)
-        // }
     }
-
-    // // Add point markers for astronomicalObjects
-    // var placePointId = setInterval(function() {
-    //     astronomicalObjects.forEach(astronomicalObject => {
-    //         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
-    //         const dot = new THREE.SphereGeometry(astronomicalObject.radius / 6378 * 0.05, 16, 16); // Geometry for the marker
-    //         const material = new THREE.MeshBasicMaterial({ color: astronomicalObject.color }); // Material for the marker
-    //         const mesh = new THREE.Mesh(dot, material); // Create the marker mesh
-    //         mesh.position.set(astronomicalObjectMesh.position.x, astronomicalObjectMesh.position.y, astronomicalObjectMesh.position.z); // Set marker position to match the object
-    //         scene.add(mesh); // Add the marker to the scene
-    //     });
-    // }, 1000); // Update markers every second
 
     // Position the camera
     camera.position.set(0, 0, 5); // Set the camera's position
@@ -85,7 +66,7 @@ export function initSolarSystem(astronomicalObjects) {
 
     // Initialize controls for zooming in and out with the mouse
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; // Enable damping (smooth movement)
+    // controls.enableDamping = true; // Enable damping (smooth movement)
 
     // Adjust renderer size on window resize
     window.addEventListener('resize', () => {
@@ -98,6 +79,34 @@ export function initSolarSystem(astronomicalObjects) {
     document.addEventListener('mousemove', (event) => {
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1; // Calculate normalized mouse x position
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1; // Calculate normalized mouse y position
+    });
+
+    // TODO Maybe use this to zoom to a planet?
+    // function lerpToPoint(point, alpha) {
+    //     while (camera.position.distanceTo(point) > 1) {
+    //         camera.position.lerp(point, alpha);
+    //     }
+    // }
+
+    document.addEventListener('click', (event) => {
+        // const filteredChildren = scene.children.filter(child => child.constructor.name == "Mesh");
+        // const intersects = raycaster.intersectObjects(filteredChildren, false);
+        // if (intersects.length > 0) { 
+        //     document.getElementById('planet-info').innerHTML = intersects[0].object.constructor.name;
+
+        //     // lerpToPoint(intersects[0].object.position, 0.0001);
+        //     // console.log(intersects[0].object.constructor.name);
+        // }
+        // Raycasting for interaction
+        //https://github.com/mrdoob/three.js/blob/master/examples/webgl_interactive_cubes.html
+        astronomicalObjects.forEach(astronomicalObject => { 
+            const astronomicalObjectMesh = astronomicalObject.getObjectMesh();
+            // const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
+            const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
+            if (intersects.length > 0) {
+                document.getElementById('planet-info').innerHTML = astronomicalObject.info;
+            }
+        })
     });
 }
 
