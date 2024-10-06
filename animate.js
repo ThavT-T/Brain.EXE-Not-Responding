@@ -19,18 +19,22 @@ export function initSolarSystem(astronomicalObjects, isOrbits) {
     const sun = new THREE.Mesh(geometrySun, materialSun); // Create the Sun mesh
     scene.add(sun); // Add the Sun to the scene
 
-    if (Array.isArray(astronomicalObjects)){
-        // Add astronomicalObjects (planets, etc.) to the scene
-        astronomicalObjects.forEach(astronomicalObject => {
-            const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
-            // if(isOrbits){
-                const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
-                scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
-            // }else{
-                // scene.add(astronomicalObjectMesh); // Add the mesh to the scene
+    // if (Array.isArray(astronomicalObjects)){
+    //     // Add astronomicalObjects (planets, etc.) to the scene
+    //     astronomicalObjects.forEach(astronomicalObject => {
+    //         const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
+    //         const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
+    //         scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
 
-            // }
-        })}else{console.log("astronomicalObjects not an array")};
+    //     })}else {console.log("astronomicalObjects not an array")};
+
+    // Add astronomicalObjects (planets, etc.) to the scene
+    astronomicalObjects.forEach(astronomicalObject => {
+        const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for each astronomical object
+        const astronomicalObjectOrbit = getOrbit(astronomicalObject); // Get the orbit for each astronomical object
+        scene.add(astronomicalObjectMesh, astronomicalObjectOrbit); // Add the mesh to the scene
+    });
+
     function getOrbit(aObject) {
         var geometry = new THREE.BufferGeometry();
         var material = new THREE.LineBasicMaterial({ color: 0xffffff });
@@ -47,15 +51,21 @@ export function initSolarSystem(astronomicalObjects, isOrbits) {
         requestAnimationFrame(animate); // Create the animation loop
         t *= 0.001; // Convert time to seconds
 
-        if (Array.isArray(astronomicalObjects)){
-            // Adjust each astronomicalObject's position in the scene based on time
-            astronomicalObjects.forEach(astronomicalObject => {
-               const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
-               const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
-               astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
-            })}else{console.log("astronomicalObjects not an array")};
+        // if (Array.isArray(astronomicalObjects)){
+        //     // Adjust each astronomicalObject's position in the scene based on time
+        //     astronomicalObjects.forEach(astronomicalObject => {
+        //        const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
+        //        const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
+        //        astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
+        //     })}else{console.log("astronomicalObjects not an array")};
 
-
+        // Adjust each astronomicalObject's position in the scene based on time
+        astronomicalObjects.forEach(astronomicalObject => {
+            const position = astronomicalObject.getObjectPosition(t); // Calculate the position of the object
+            const astronomicalObjectMesh = astronomicalObject.getObjectMesh(); // Get the mesh for the object
+            astronomicalObjectMesh.position.set(position.x, position.y, position.z); // Set the object's position
+        });
+        
         render(); // Render the scene
         scene.add(sun); // Keep the Sun in the center
     }

@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "csvtojson": "^2.0.10",
+    "d3-request": "^1.0.6",
     "three": "^0.169.0",
     "three-orbitcontrols": "^2.110.3"
   },

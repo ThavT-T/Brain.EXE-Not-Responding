@@ -1,5 +1,4 @@
 import * as THREE from "three"
-
 // Class Definition
 class AstronomicalObject {
     constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, info, texture, doOrbit) {
@@ -74,11 +73,11 @@ export const planets = [
 ];
 
 
-const jsonUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
+const nearEarthObjectsUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
 
 // Function to fetch and return near-Earth objects
 export const getNearEarthObjects = () => {
-    return fetch(jsonUrl)
+    return fetch(nearEarthObjectsUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -106,32 +105,181 @@ export const getNearEarthObjects = () => {
         });
 };
 
-//var csv is the CSV file with headers
-function csvJSON(csv){
+const NEOCometsURL = './outsideObjects/NEOcomets.json';
 
-    var lines=csv.split("\n");
-  
-    var result = [];
-  
-    // NOTE: If your columns contain commas in their values, you'll need
-    // to deal with those before doing the next step 
-    // (you might convert them to &&& or something, then covert them back later)
-    // jsfiddle showing the issue https://jsfiddle.net/
-    var headers=lines[0].split(",");
-  
-    for(var i=1;i<lines.length;i++){
-  
-        var obj = {};
-        var currentline=lines[i].split(",");
-  
-        for(var j=0;j<headers.length;j++){
-            obj[headers[j]] = currentline[j];
-        }
-  
-        result.push(obj);
-  
-    }
-  
-    //return result; //JavaScript object
-    return JSON.stringify(result); //JSON
-  }
+// Function to fetch and return near-Earth objects
+export const getNEOcomets = () => {
+    return fetch(NEOCometsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    4000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+const NEOAsteroidsURL = './outsideObjects/NEOasteroids.json';
+export const getNEOasteroids = () => {
+    return fetch(NEOAsteroidsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    4000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+const PHAasteroidsURL = './outsideObjects/PHAasteroids.json';
+export const getPHAasteroids = () => {
+    return fetch(PHAasteroidsURL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json(); 
+        })
+        .then(jsonData => {
+            var objects = jsonData.map(obj => {
+                return new AstronomicalObject(
+                    obj.full_name,                           // Name
+                    parseFloat(obj.a),                  // Semi-major axis
+                    parseFloat(obj.e),                  // Eccentricity
+                    parseFloat(obj.i),                  // Inclination
+                    parseFloat(obj.om),                 // Longitude of ascending node
+                    parseFloat(obj.w),                  // Argument of perihelion
+                    0xffffff,          
+                    4000,
+                    "",
+                    "textures/Rock.jpg"           
+                );});
+            return objects;
+        })
+        .catch(error => {
+            console.error('Error fetching the JSON file:', error);
+            return null; 
+        });
+};
+
+// // Function to convert CSV data to JSON format
+// function csvJSON(csv) {
+//     // console.log(csv)
+//     var lines = csv.split("\n"); // Split into rows
+//     var result = [];
+//     var headers = lines[0].split(","); // Split header row
+
+//     for (var i = 1; i < lines.length; i++) {
+//         var obj = {};
+//         var currentline = lines[i].split(",");
+
+//         for (var j = 0; j < headers.length; j++) {
+//             obj[headers[j]] = currentline[j]; // Assign CSV values to headers
+//         }
+
+//         result.push(obj);
+//     }
+//     // console.log(result)
+//     return result; // Return JSON array of objects
+// }
+
+// import { csv } from "d3-request"
+// export function getNEOcomets(){
+//     var objects = {}
+//     csv("./outsideObjects/NEOcomets.csv", function(err, data) {
+//         objects = data.map(obj => {
+//         return new AstronomicalObject(
+//             obj.full_name,                           // Name
+//             parseFloat(obj.a),                  // Semi-major axis
+//             parseFloat(obj.e),                  // Eccentricity
+//             parseFloat(obj.i),                  // Inclination
+//             parseFloat(obj.om),                 // Longitude of ascending node
+//             parseFloat(obj.w),                  // Argument of perihelion
+//             0xffffff * Math.random(),           // Random color 
+//             12,
+//             "",
+//             "textures/Venus.png"           
+//         );});
+        
+//         return objects
+//     })
+//     // while(objects == {}) {}
+//     return objects
+// }
+// // console.log("objects",objects);
+// // fetch()
+// // const filereader = new FileReader();
+// // const file = new File("./outsideObjects/NEOcomets.csv")
+// // filereader.readAsText()
+
+// // Function to create an array of AstronomicalObject instances from the CSV data
+// // export const getNEOasteroids = () => {
+// //     // fetch(csvData).then((response) => response.text().then((data) => {jsonData = data}));
+// //     fetch(csvData).then((res) => res.text()).then((text) => {
+// //         var jsonData = csvJSON(text);
+// //         const objects = jsonData.map(obj => {
+// //             console.log("A",obj)
+// //             return new AstronomicalObject(
+// //                 obj.full_name,                           // Name
+// //                 parseFloat(obj.a),                  // Semi-major axis
+// //                 parseFloat(obj.e),                  // Eccentricity
+// //                 parseFloat(obj.i),                  // Inclination
+// //                 parseFloat(obj.om),                 // Longitude of ascending node
+// //                 parseFloat(obj.w),                  // Argument of perihelion
+// //                 0xffffff * Math.random(),           // Random color 
+// //                 12,
+// //                 "",
+// //                 "textures/Venus.png"           
+// //             );
+// //         });
+// //         console.log(jsonData);
+// //         console.log(objects);
+// //         return objects;
+// //     })
+
+
+
+// //     // return objects; // Return list of AstronomicalObject instances
+// // };
+
+// // Test the function
+// // console.log(getNEOasteroids());
+// // getNEOasteroids().then((data) => console.log(data))
