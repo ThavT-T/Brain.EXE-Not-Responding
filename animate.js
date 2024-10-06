@@ -15,7 +15,8 @@ export function initSolarSystem(astronomicalObjects) {
 
     // Creation of the Sun
     const geometrySun = new THREE.SphereGeometry(0.2, 32, 32); // Geometry for the Sun
-    const materialSun = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // Material for the Sun
+    // const materialSun = new THREE.MeshBasicMaterial({ color: 0xffff00 }); // Material for the Sun
+    const materialSun = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load("textures/Sun.jpg") } ); // Material for the Sun
     const sun = new THREE.Mesh(geometrySun, materialSun); // Create the Sun mesh
     scene.add(sun); // Add the Sun to the scene
 

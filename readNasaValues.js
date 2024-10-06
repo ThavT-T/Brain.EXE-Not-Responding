@@ -2,19 +2,20 @@ import * as THREE from "three"
 
 // Class Definition
 class AstronomicalObject {
-    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius) {
+    constructor(name, semiMajorAxis, eccentricity, inclination, longitudeAscendingNode, longitudePerihelion, color, radius, texture) {
         this.name = name;
         this.a = semiMajorAxis;  // Semi-major axis (a)
-        this.e = eccentricity;      // Eccentricity (e)
-        this.i = inclination;        // Inclination (i)
+        this.e = eccentricity;   // Eccentricity (e)
+        this.i = inclination;    // Inclination (i)
         this.longitudeAscendingNode = longitudeAscendingNode;  // Longitude of ascending node
-        this.longitudePerihelion = longitudePerihelion;      // Argument of perihelion
-        this.color = color;                    // Color
+        this.longitudePerihelion = longitudePerihelion;        // Argument of perihelion
+        this.color = color;      // Color
         this.radius = radius
 
-        const geometryPlanet = new THREE.SphereGeometry(0.1, 16, 16);
-        const materialPlanet = new THREE.MeshBasicMaterial({ color: this.color });
-        this.mesh = new THREE.Mesh(geometryPlanet, materialPlanet);
+        const geometryPlanet = new THREE.SphereGeometry(this.radius / 6378 * 0.1, 16, 16);
+        // const materialPlanet = new THREE.MeshBasicMaterial({ color: this.color });
+        const texturePlanet = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load(texture) } );
+        this.mesh = new THREE.Mesh(geometryPlanet, texturePlanet);
     }
 
     getObjectPosition(t) { 
@@ -59,14 +60,14 @@ class AstronomicalObject {
 
 // Creating planets as an array of AstronomicalObject instances
 export const planets = [
-    new AstronomicalObject("Mercury", 0.387098,  0.20563,   7.00497902, 48.33076593, 29.124, 0xffbf00, 2439.7),
-    new AstronomicalObject("Venus",    0.723332,   0.006772,   3.39467605,  76.67984255,   54.884,    0x0000ff, 6051.8),
-    new AstronomicalObject("Earth",    1.0,        0.0167086,  7.155,       -11.26064,     114.2078,  0x00ff40, 6378),
-    new AstronomicalObject("Mars",     1.523679,   0.0934,     1.84969142,  49.55953891,   286.502,   0xff0000,3389.5),
-    new AstronomicalObject("Jupiter",  5.2044,     0.0489,     1.30439695,  100.47390909,  273.867,   0x8000ff, 69911),
-    new AstronomicalObject("Saturn",   9.5826,     0.0565,     2.48599187,  113.66242448,  339.392,   0xff00ff, 58232),
-    new AstronomicalObject("Uranus",   19.2184,    0.046381,   0.77263783,  74.01692503,   96.99886,  0x00ffff, 25362),
-    new AstronomicalObject("Neptune",  30.110387,  0.009456,   1.77004347,  131.78422574,  276.336,   0x80ff00, 24397)
+    new AstronomicalObject("Mercury",  0.387098,   0.20563,    7.00497902,  48.33076593,   29.124,    0xffbf00, 2439.7, "textures/Mercury.jpg"),
+    new AstronomicalObject("Venus",    0.723332,   0.006772,   3.39467605,  76.67984255,   54.884,    0x0000ff, 6051.8, "textures/Venus.png"),
+    new AstronomicalObject("Earth",    1.0,        0.0167086,  7.155,       -11.26064,     114.2078,  0x00ff40, 6378  , "textures/Earth.jpg"),
+    new AstronomicalObject("Mars",     1.523679,   0.0934,     1.84969142,  49.55953891,   286.502,   0xff0000, 3389.5, "textures/Mars.png"),
+    new AstronomicalObject("Jupiter",  5.2044,     0.0489,     1.30439695,  100.47390909,  273.867,   0x8000ff, 69911 , "textures/Jupiter.jpg"),
+    new AstronomicalObject("Saturn",   9.5826,     0.0565,     2.48599187,  113.66242448,  339.392,   0xff00ff, 58232 , "textures/Saturn.jpg"),
+    new AstronomicalObject("Uranus",   19.2184,    0.046381,   0.77263783,  74.01692503,   96.99886,  0x00ffff, 25362 , "textures/Uranus.jpg"),
+    new AstronomicalObject("Neptune",  30.110387,  0.009456,   1.77004347,  131.78422574,  276.336,   0x80ff00, 24397 , "textures/Neptune.jpg")
 ];
 
 const jsonUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
