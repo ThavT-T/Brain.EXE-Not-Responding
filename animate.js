@@ -31,6 +31,8 @@ export function initSolarSystem(astronomicalObjects) {
     materialSkybox.side = THREE.DoubleSide;
     const skybox = new THREE.Mesh(geometrySkybox, materialSkybox);
     scene.add(skybox)
+    
+    
 
 
     // Add astronomicalObjects (planets, etc.) to the scene
@@ -80,6 +82,12 @@ export function initSolarSystem(astronomicalObjects) {
 
     // Initialize controls for zooming in and out with the mouse
     const controls = new OrbitControls(camera, renderer.domElement);
+
+    controls.mouseButtons = {
+        LEFT: THREE.MOUSE.ROTATE,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN
+    }
     // controls.enableDamping = true; // Enable damping (smooth movement)
 
     // Adjust renderer size on window resize
@@ -94,6 +102,7 @@ export function initSolarSystem(astronomicalObjects) {
         var rect = renderer.domElement.getBoundingClientRect();
         pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1; // Calculate normalized mouse x position
         pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1; // Calculate normalized mouse y position
+
     });
 
     // TODO Maybe use this to zoom to a planet?
@@ -119,9 +128,17 @@ export function initSolarSystem(astronomicalObjects) {
             // const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             const intersects = raycaster.intersectObject(astronomicalObjectMesh, false);
             if (intersects.length > 0) {
-                document.getElementById('planet-info').innerHTML = astronomicalObject.info
+                document.getElementById('planet-info').innerHTML = astronomicalObject.info 
                 document.getElementById('planet-info').style.color = 'white'
+
             }
+            
+            const intersectsSun = raycaster.intersectObject(sun, false);
+            if(intersectsSun.length > 0){
+                document.getElementById('Sun-info').innerHTML = "It’s the star of our solar system! \nIt’s thanks to the sun’s gravity that all the planets can hold together \nIt can produce solar storms which can disturb the Earth’s magnetic field and produce radio blackouts, power outages, and auroras"; 
+                document.getElementById('Sun-info').style.color = 'yellow'
+            }
+            
         })
     });
 }
