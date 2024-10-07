@@ -45,10 +45,8 @@ class AstronomicalObject {
         const longitudeAscendingNode = THREE.MathUtils.degToRad(this.longitudeAscendingNode); 
         const longitudePerihelion = THREE.MathUtils.degToRad(this.longitudePerihelion); 
         const argumentPerihapsis = longitudePerihelion - longitudeAscendingNode;
-        // Calculate radial distance
         const r = (a * (1 - e * e)) / (1 + e * Math.cos(trueAnomaly));
 
-        // calculate coordinate x, y, z
         const x = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode) - Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode));
         const y = r * (Math.cos(argumentPerihapsis + trueAnomaly) * Math.sin(longitudeAscendingNode) + Math.cos(i) * Math.sin(argumentPerihapsis + trueAnomaly) * Math.cos(longitudeAscendingNode));
         const z = r * (Math.sin(trueAnomaly + argumentPerihapsis) * Math.sin(i));
@@ -101,7 +99,6 @@ export const planets = [
 
 const nearEarthObjectsUrl = 'https://data.nasa.gov/resource/b67r-rgxc.json';
 
-// Function to fetch and return near-Earth objects
 export const getNearEarthObjects = () => {
     return fetch(nearEarthObjectsUrl)
         .then(response => {
@@ -112,7 +109,7 @@ export const getNearEarthObjects = () => {
         })
         .then(jsonData => {
             const objects = jsonData.map(obj => {
-                const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2; // Average
+                const semiMajorAxis = (parseFloat(obj.q_au_1) + parseFloat(obj.q_au_2)) / 2;
                 return new AstronomicalObject(
                     obj.object_name || obj.object,
                     semiMajorAxis,
