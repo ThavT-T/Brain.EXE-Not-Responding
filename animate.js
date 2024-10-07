@@ -1,3 +1,4 @@
+import { mul } from "three/webgpu";
 import * as THREE from "./node_modules/three/build/three.module.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 
@@ -26,7 +27,7 @@ export function initSolarSystem(astronomicalObjects) {
     const sun = new THREE.Mesh(geometrySun, materialSun); // Create the Sun mesh
     scene.add(sun); // Add the Sun to the scene
 
-    const geometrySkybox = new THREE.SphereGeometry(1000, 24, 24);
+    const geometrySkybox = new THREE.SphereGeometry(1000000, 24, 24);
     const materialSkybox = new THREE.MeshBasicMaterial( { map: new THREE.TextureLoader().load("textures/Skybox.jpg") } );
     materialSkybox.side = THREE.DoubleSide;
     const skybox = new THREE.Mesh(geometrySkybox, materialSkybox);
@@ -59,11 +60,26 @@ export function initSolarSystem(astronomicalObjects) {
         }
 
     }
+
+    var runOnce = false;
+    var old_t = 0;
+    var stop = false;
+    document.getElementById("play_button").onclick = function() {stop = false; runOnce = false;};
+    document.getElementById("stop_button").onclick = function() {stop = true;};
+
     // Animation loop for moving the astronomicalObjects
     function animate(t) {
         requestAnimationFrame(animate); // Create the animation loop
         t *= 0.001; // Convert time to seconds
 
+        if (stop) {
+            if (!runOnce) {
+                old_t = t;
+                runOnce = true;
+            }
+            t = old_t;
+        }
+        
         // if (Array.isArray(astronomicalObjects)){
         //     // Adjust each astronomicalObject's position in the scene based on time
         //     astronomicalObjects.forEach(astronomicalObject => {
