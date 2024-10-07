@@ -3,7 +3,7 @@ import * as THREE from "./node_modules/three/build/three.module.js";
 import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js';
 
 const scaleX = 0.97
-const scaleY = 0.8
+const scaleY = 0.7
 
 export function initSolarSystem(astronomicalObjects) {
     const scene = new THREE.Scene();
