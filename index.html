@@ -3,13 +3,13 @@
 <html>
     <head>
         <title>Yet Another Orrery</title>
-      <script type="module" crossorigin src="./assets/main-CgOwPf27.js"></script>
+      <script type="module" crossorigin src="./assets/main-DZrwWv3P.js"></script>
       <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-B5Qt9EMX.js">
       <link rel="stylesheet" crossorigin href="./assets/main-C2a6Yuyk.css">
     </head>
 
     <body style="margin: auto">
-        <div style="height: 90%; position: absolute; width: 100%; overflow-y:scroll;">
+        <div style="height: 90%; position: absolute; width: 100%; overflow-y: scroll;">
             <p style="font-size: 48px; font-weight: 700">Welcome to <span style="color: yellow; font-style: italic; text-shadow: 2px 2px 5px yellow">The Solar System!</span><br></p>
             <hr>
             <br>
@@ -38,18 +38,36 @@
             <p style="font-size: 30px; font-weight: 700">Credits</p>
             <p>Orbits, mathematics and literally every other important thing done by <span style='color: rgb(139, 72, 255)'>Thavin Thanabalasingam</span>, <span style='color: rgb(99, 171, 253)'>Olivia <i>Olie</i></span> and <span style="color: rgb(255, 89, 255)">Charles <i>'cabbagecultist'</i></span>.<br>Website made by <span style="color: rgb(255, 146, 51)">Syed-Hasib <i>'Jazzbank'</i> Hossain</span>.<br>Using <a href="https://threejs.org/" style='color: white;'>Three.js</a><br>Thank you for visiting!</p>    
         </div>
-        <div style="bottom: 0px; position: fixed; border-top: 2px white solid; display: flex; width: 100%; background-color: #1f1f1f; height: 10%">
-            <div style="width: 70%; background-color: rgb(36, 36, 0); height: 100%; text-align: center; border-right: 1px white solid;">
-                <button class="buttons" onclick="window.location.href='./app.html';" style="width: 80%; background: repeating-linear-gradient(60deg,#393900,#393900 20px, #4f4f00 20px, #4f4f00 40px); font-size: 24px">Explore THE SOLAR SYSTEM!</button>
-            </div>
 
+        <div style="bottom: 0px; position: fixed; border-top: 2px white solid; display: flex; width: 100%; background-color: #1f1f1f; height: 10%">
             <div style="width: 30%; background-color: rgb(55, 55, 55); border-left: 1px white solid; left: 70%; top: 0px; height: 100%; vertical-align: middle;">
                 <p style="font-size: 48px; opacity: 10%; position: absolute; left: 85%; top: 50%; transform: translate(-50%, -50%); font-weight: 700;"><i>FILTERS</i></p>
+
                 <input type="checkbox" id="potHazAst" name="potHazAst" style="width: 24px; height: 24px;">
-                <label for="vehicle1">Potentially hazardous asteroids</label><br>
-                <input type="checkbox" id="nearASt" name="nearAst" style="width: 24px; height: 24px;">
-                <label for="vehicle2">Near-earth asteroids</label><br>
+                <label for="potHazAst">Potentially hazardous asteroids</label><br>
+                <input type="checkbox" id="nearAst" name="nearAst" style="width: 24px; height: 24px;">
+                <label for="nearAst">Near-earth asteroids</label><br>
+            </div>
+
+            <div style="width: 70%; background-color: rgb(36, 36, 0); height: 100%; text-align: center; border-right: 1px white solid;">
+                <button class="buttons" id="exploreBtn" style="width: 80%; background: repeating-linear-gradient(60deg,#393900,#393900 20px, #4f4f00 20px, #4f4f00 40px); font-size: 24px">Explore THE SOLAR SYSTEM!</button>
             </div>
         </div>
+
+        <script>
+            document.getElementById('exploreBtn').addEventListener('click', function() {
+                const potHazAstChecked = document.getElementById('potHazAst').checked;
+                const nearAstChecked = document.getElementById('nearAst').checked;
+
+                localStorage.setItem('potHazAst', potHazAstChecked);
+                localStorage.setItem('nearAst', nearAstChecked);
+
+                console.log('Retrieved Values:', { potHazAstChecked, nearAstChecked });
+
+                const url = './app.html?potHazAst=' + potHazAstChecked + '&nearAst=' + nearAstChecked;
+                window.location.href = url;
+            });
+        </script>
+
     </body>
 </html>
