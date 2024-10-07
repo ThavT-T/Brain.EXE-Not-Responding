@@ -3,7 +3,7 @@
 <html>
     <head>
         <title>Yet Another Orrery</title>
-        <link rel="stylesheet" type="text/css" href="looks.css">
+        <link rel="stylesheet" type="text/css" href="index_css.css">
     </head>
 
     <body style="margin: auto">
@@ -62,10 +62,11 @@
 
                 console.log('Retrieved Values:', { potHazAstChecked, nearAstChecked });
 
-                const url = './main.html?potHazAst=' + potHazAstChecked + '&nearAst=' + nearAstChecked;
+                const url = './app.html?potHazAst=' + potHazAstChecked + '&nearAst=' + nearAstChecked;
                 window.location.href = url;
             });
         </script>
+         <script type="module" src="index_js.js"></script>
 
     </body>
 </html>

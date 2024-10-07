@@ -55,6 +55,8 @@ else if(nearAst){
         }
     }).then(() => initSolarSystem(allObjects));
 
+} else {
+    initSolarSystem(allObjects);
 }
 // if(potHazAst){
 // }

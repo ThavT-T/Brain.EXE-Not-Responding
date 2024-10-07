@@ -6,6 +6,10 @@
     "three-orbitcontrols": "^2.110.3"
   },
   "devDependencies": {
+    "gh-pages": "^6.1.1",
     "vite": "^5.4.8"
+  },
+  "scripts": {
+    "deploy": "gh-pages -d dist"
   }
 }
