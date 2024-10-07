@@ -156,7 +156,7 @@ export function initSolarSystem(astronomicalObjects) {
         if (intersectsSun.length > 0) {
             console.log("Entered")
             if (document.getElementById('Sun-info').innerHTML == '') {
-                document.getElementById('Sun-info').innerHTML   = "It’s the star of our solar system! \nIt’s thanks to the Sun’s gravity that all the planets can hold together \nIt can produce solar storms which can disturb the Earth’s magnetic field and produce radio blackouts, power outages, and auroras";   
+                document.getElementById('Sun-info').innerHTML   = "Sun: It’s the star of our solar system! \nIt’s thanks to the Sun’s gravity that all the planets can hold together \nIt can produce solar storms which can disturb the Earth’s magnetic field and produce radio blackouts, power outages, and auroras";   
                 document.getElementById('Sun-info').style.color = 'yellow'
             } else {
                 document.getElementById('Sun-info').innerHTML = ''
